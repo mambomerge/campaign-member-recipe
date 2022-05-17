@@ -1,0 +1,68 @@
+<apex:page standardController="Campaign" applyBodyTag="false" extensions="CampaignExtension">
+  <!--
+      @description Use this page for a Button on the Campaign sObject
+          that will merge a document for each CampaignMember record related to it
+  -->
+  <apex:pageMessages />
+  <apex:form>
+    <apex:pageBlock>
+      <apex:pageBlockButtons location="top">
+        <apex:commandButton action="{!cancel}" value="Back" />
+      </apex:pageBlockButtons>
+    </apex:pageBlock>
+  </apex:form>
+  <apex:includeLightning />
+  <apex:slds />
+  <div class="slds-scope" style="margin-bottom: 50px;">
+    <div class="slds-progress-bar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25" role="progressbar" style="width:100%;">
+      <span id="myBar" class="slds-progress-bar__value" style="width:0%">
+        <span id="assistiveText" class="slds-assistive-text">Progress: 0%</span>
+      </span>
+    </div>
+  </div>
+
+
+  <div id="lightning" style="display:none;" />
+
+  <script type="text/javascript">
+    // TODO (REQUIRED): Please enter your template Id in the var below
+    const TEMPLATE_ID = "CampaignMember";
+
+    // TODO (OPTIONAL): Enable debug mode if things are working
+    const debugOn = false;
+
+    /*****  DO NOT CHANGE BELOW CODE *****/
+    const CAMPAIGN_ID = '{!Campaign.Id}';
+    console.log( 'This CampaignId:', campaignId );
+
+    Visualforce.remoting.timeout = 120000; // Set timeout at page level
+      Visualforce.remoting.Manager.invokeAction(
+          '{!$RemoteAction.CampaignExtension.queryCampaignMembers}',
+          CAMPAIGN_ID, 
+          mergeDocuments
+      );
+
+    function mergeDocuments(result, event){
+      if (result && result.length > 0 && templateId) {
+        $Lightning.use("c:mamboMergeApp", function () {
+          $Lightning.createComponent(
+            "mambo:mamboMerge",
+            {
+              templateId: TEMPLATE_ID,
+              debug: debugOn,
+              recordId: CAMPAIGN_ID,
+              mergeData: [{records:result}],
+              mergeOnLoad: true
+            },
+            "lightning",
+            function (cmp, status, errorMessage) {
+              if (status === 'SUCCESS') {
+                console.log("isSuccess", cmp.get('v.isSuccess'))
+              }
+            }
+          );
+        });
+      }
+    }
+  </script>
+</apex:page>
