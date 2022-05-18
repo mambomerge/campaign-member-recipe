@@ -43,7 +43,7 @@
       );
 
     function mergeDocuments(result, event){
-      if (result && result.length > 0 && templateId) {
+      if (result && result.length > 0 && TEMPLATE_ID) {
         $Lightning.use("c:mamboMergeApp", function () {
           $Lightning.createComponent(
             "mambo:mamboMerge",
