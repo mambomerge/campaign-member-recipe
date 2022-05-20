@@ -33,7 +33,7 @@
 
     /*****  DO NOT CHANGE BELOW CODE *****/
     const CAMPAIGN_ID = '{!Campaign.Id}';
-    console.log( 'This CampaignId:', campaignId );
+    console.log( 'This CampaignId:', CAMPAIGN_ID );
 
     Visualforce.remoting.timeout = 120000; // Set timeout at page level
       Visualforce.remoting.Manager.invokeAction(
@@ -56,9 +56,11 @@
             },
             "lightning",
             function (cmp, status, errorMessage) {
-              if (status === 'SUCCESS') {
-                console.log("isSuccess", cmp.get('v.isSuccess'))
-              }
+              // receive the completion message from Mambo Merge
+              document.querySelector('mambo-mambo-merge').addEventListener('merge', (mergeEvent) => {
+                console.log(mergeEvent.detail.isSuccess);
+                console.log('The new file id is: '+mergeEvent.detail.Id);
+              });
             }
           );
         });
